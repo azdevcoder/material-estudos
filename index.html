@@ -41,6 +41,11 @@ aside.toc{border-bottom:1px solid var(--line);background:var(--bg)}
 main{padding:1rem .9rem 7rem;max-width:var(--maxw);margin:0 auto}
 body.foco main{max-width:38rem}
 body.foco aside.toc{display:none}
+body.foco header.top{display:none}
+body.foco .mobilenav{display:none}
+body.foco .topbtn{display:none!important}
+#focoExit{position:fixed;left:.6rem;top:calc(.6rem + env(safe-area-inset-top));z-index:80;display:none;align-items:center;gap:.35rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:99px;padding:.6rem .95rem;font-size:.9rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);min-height:2.9rem}
+#focoExit.show{display:inline-flex}
 .crumb{font-size:.8rem;color:var(--muted)}
 h1{font-size:1.6rem;line-height:1.25;margin:.4rem 0 .6rem}
 h2.cap{font-size:1.3rem;color:var(--acc);margin-top:2.2rem;border-bottom:2px solid var(--acc);padding-bottom:.3rem}
@@ -118,6 +123,7 @@ footer{color:var(--muted);font-size:.8rem;padding:1rem;text-align:center}
     <div style="flex:1"><div class="progress"><i id="bar"></i></div><div class="ptext" id="ptxt">0% lido</div></div>
   </div>
 </header>
+<button id="focoExit" aria-label="Sair do modo foco">‹ Sair do foco</button>
 <div class="layout">
 <aside class="toc" id="toc" hidden>
   <div class="toc-in">
@@ -426,9 +432,17 @@ document.querySelectorAll("[data-th]").forEach(function(b){b.onclick=function(){
 function applyFs(){document.documentElement.style.setProperty("--fs",S.fs+"rem")}
 document.getElementById("fPlus").onclick=function(){S.fs=Math.min(1.4,+(S.fs+0.08).toFixed(2));applyFs();save()};
 document.getElementById("fMinus").onclick=function(){S.fs=Math.max(0.85,+(S.fs-0.08).toFixed(2));applyFs();save()};
-var bf=document.getElementById("btnFoco");
-function applyFoco(){document.body.classList.toggle("foco",S.foco);bf.setAttribute("aria-pressed",S.foco?"true":"false")}
-bf.onclick=function(){S.foco=!S.foco;applyFoco();save()};
+var bf=document.getElementById("btnFoco"), fe=document.getElementById("focoExit"), feT=null;
+function applyFoco(){document.body.classList.toggle("foco",S.foco);bf.setAttribute("aria-pressed",S.foco?"true":"false");if(!S.foco)fe.classList.remove("show")}
+function setFoco(on){S.foco=on;applyFoco();save()}
+bf.onclick=function(){setFoco(!S.foco)};
+fe.onclick=function(){setFoco(false)};
+function showFocoExit(){if(!S.foco)return;fe.classList.add("show");if(feT)clearTimeout(feT);feT=setTimeout(function(){fe.classList.remove("show")},4000)}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&S.foco)setFoco(false)});
+var sw=null;
+document.addEventListener("touchstart",function(e){if(!S.foco||e.touches.length!==1){sw=null;return}var t=e.touches[0];sw=(t.clientX<30)?{x:t.clientX,y:t.clientY}:null},{passive:true});
+document.addEventListener("touchmove",function(e){if(!sw)return;var t=e.touches[0],dx=t.clientX-sw.x,dy=Math.abs(t.clientY-sw.y);if(dx>70&&dy<70){showFocoExit();sw=null}else if(dx<-10||dy>90){sw=null}},{passive:true});
+document.addEventListener("touchend",function(){sw=null},{passive:true});
 var caps=["cap1","cap2","cap3","cap4","cap5","cap6","cap7","cap8","cap9","cap10","cap11","cap12","cap13","cap14","cap15","cap16","cap17","cap18","cap19"];
 function paint(){var n=caps.filter(function(c){return S.done[c]}).length;
 document.getElementById("bar").style.width=Math.round(n/caps.length*100)+"%";
