@@ -1,1 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a56db">
+<title>PHP 8.3 / 8.4 / 8.5 + Laravel 12 / 13 — Livro Web</title>
+<style>
+:root{
+  --bg:#ffffff; --fg:#111827; --muted:#6b7280; --acc:#1a56db;
+  --card:#f9fafb; --line:#e5e7eb; --code-bg:#f3f4f6; --code-fg:#111827;
+  --maxw:46rem; --fs:1.02rem; --lh:1.75; --radius:10px;
+}
+[data-theme="escuro"]{ --bg:#0f172a; --fg:#e5e7eb; --muted:#94a3b8; --acc:#60a5fa;
+  --card:#1e293b; --line:#334155; --code-bg:#020617; --code-fg:#e2e8f0; }
+[data-theme="sepia"]{ --bg:#faf3e3; --fg:#3f3222; --muted:#8a7a5c; --acc:#8a5a00;
+  --card:#f3e9d2; --line:#ddcda6; --code-bg:#efe3c8; --code-fg:#3f3222; }
+[data-theme="noite"]{ --bg:#000000; --fg:#f8fafc; --muted:#a1a1aa; --acc:#facc15;
+  --card:#18181b; --line:#3f3f46; --code-bg:#09090b; --code-fg:#fafafa; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 var(--fs)/var(--lh) system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--acc)}
+header.top{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{max-width:80rem;margin:0 auto;padding:.6rem .9rem;display:flex;gap:.5rem;align-items:center}
+.brand{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:.72rem}
+.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;min-width:2.6rem;height:2.6rem;font-size:1.15rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:manipulation}
+.search{flex:1;display:flex}
+.search input{width:100%;height:2.6rem;border:1px solid var(--line);border-radius:8px;padding:0 .8rem;background:var(--bg);color:var(--fg);font-size:1rem}
+.layout{max-width:80rem;margin:0 auto;display:block}
+aside.toc{border-bottom:1px solid var(--line);background:var(--bg)}
+.toc-in{padding:.8rem .9rem}
+.toc h2{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:.2rem 0 .6rem}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.toc a{display:flex;gap:.55rem;align-items:baseline;text-decoration:none;color:var(--fg);padding:.5rem .6rem;border-radius:8px;font-size:.92rem}
+.toc a .n{color:var(--acc);font-weight:700;min-width:1.6rem}
+.toc a[aria-current="true"]{background:var(--card);outline:2px solid var(--acc)}
+.toc a.done .t{text-decoration:line-through;color:var(--muted)}
+.toc a.hidden{display:none}
+main{padding:1rem .9rem 7rem;max-width:var(--maxw);margin:0 auto}
+body.foco main{max-width:38rem}
+body.foco aside.toc{display:none}
+.crumb{font-size:.8rem;color:var(--muted)}
+h1{font-size:1.6rem;line-height:1.25;margin:.4rem 0 .6rem}
+h2.cap{font-size:1.3rem;color:var(--acc);margin-top:2.2rem;border-bottom:2px solid var(--acc);padding-bottom:.3rem}
+h3{font-size:1.08rem;margin-top:1.4rem}
+p{text-align:justify;hyphens:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.8rem 0}
+th,td{border:1px solid var(--line);padding:.5rem .55rem;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+th{background:var(--acc);color:#fff}
+tr:nth-child(even) td{background:var(--card)}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius);margin:.8rem 0}
+.tscroll table{margin:0;border:0}
+pre{background:var(--code-bg);color:var(--code-fg);border:1px solid var(--line);border-radius:var(--radius);padding:.8rem;font-size:.83rem;line-height:1.55;overflow-x:auto;position:relative;tab-size:2}
+pre code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+.copy{position:sticky;float:right;top:0;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;font-size:.72rem;padding:.25rem .5rem;cursor:pointer}
+.note{border-left:4px solid var(--acc);background:var(--card);padding:.6rem .8rem;border-radius:0 8px 8px 0;font-size:.92rem;margin:.8rem 0}
+ul.ex{list-style:none;padding:0}
+ul.ex li{display:flex;gap:.6rem;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.55rem .65rem;margin:.4rem 0;font-size:.92rem}
+ul.ex input{margin-top:.3rem;min-width:1.2rem;min-height:1.2rem}
+ul.ex li.done span{text-decoration:line-through;color:var(--muted)}
+.refs{font-size:.88rem;overflow-wrap:anywhere}
+.refs li{margin:.35rem 0}
+.capnav{display:flex;gap:.6rem;margin-top:2rem;flex-wrap:wrap}
+.capnav a,.capnav button{flex:1;min-height:2.9rem;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;text-decoration:none;font-size:.95rem;cursor:pointer;padding:.5rem}
+.markdone{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}
+.progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:.4rem 0 .2rem}
+.progress i{display:block;height:100%;background:var(--acc);width:0}
+.ptext{font-size:.78rem;color:var(--muted)}
+.toolbar{display:flex;gap:.4rem;flex-wrap:wrap;margin:.4rem 0 .8rem}
+.toolbar .grp{display:flex;gap:.3rem;align-items:center;border:1px solid var(--line);border-radius:8px;padding:.2rem .4rem;background:var(--card)}
+.toolbar button{border:0;background:transparent;color:var(--fg);font-size:.85rem;padding:.45rem .55rem;border-radius:6px;cursor:pointer;min-height:2.4rem}
+.toolbar button[aria-pressed="true"]{background:var(--acc);color:#fff}
+.mobilenav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg);border-top:1px solid var(--line);display:flex;padding:.45rem calc(.6rem + env(safe-area-inset-right)) calc(.6rem + env(safe-area-inset-bottom)) calc(.6rem + env(safe-area-inset-left));gap:.5rem}
+.mobilenav a,.mobilenav button{flex:1;min-height:2.9rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer}
+.topbtn{position:fixed;right:.8rem;bottom:4.6rem;z-index:60;display:none}
+.topbtn.show{display:inline-flex}
+footer{color:var(--muted);font-size:.8rem;padding:1rem;text-align:center}
+@media (min-width:900px){
+  .layout{display:grid;grid-template-columns:19rem 1fr;align-items:start}
+  aside.toc{position:sticky;top:3.6rem;max-height:calc(100vh - 4rem);overflow:auto;border-bottom:0;border-right:1px solid var(--line)}
+  .mobilenav{display:none}
+  main{padding-bottom:3rem}
+  .topbtn{bottom:1.2rem}
+}
+@media print{
+  header.top,aside.toc,.mobilenav,.topbtn,.toolbar,.capnav{display:none!important}
+  main{max-width:100%}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body data-theme="claro">
+<header class="top">
+  <div class="top-in">
+    <button class="iconbtn" id="btnToc" aria-label="Abrir sumário">☰</button>
+    <div class="brand">PHP + Laravel<small>Livro web · 19 capítulos</small></div>
+    <div class="search"><input id="q" type="search" placeholder="Buscar capítulo… (ex: blade, eloquent)" aria-label="Buscar capítulo"></div>
+    <button class="iconbtn" id="btnCfg" aria-label="Modos de leitura">☾</button>
+  </div>
+  <div class="top-in" id="cfgbar" hidden>
+    <div class="toolbar" style="margin:0">
+      <div class="grp" role="group" aria-label="Tema">
+        <button data-th="claro" aria-pressed="true">Claro</button>
+        <button data-th="sepia" aria-pressed="false">Sépia</button>
+        <button data-th="escuro" aria-pressed="false">Escuro</button>
+        <button data-th="noite" aria-pressed="false">Noite</button>
+      </div>
+      <div class="grp" role="group" aria-label="Tamanho da fonte">
+        <button id="fMinus" aria-label="Diminuir fonte">A−</button>
+        <button id="fPlus" aria-label="Aumentar fonte">A+</button>
+      </div>
+      <div class="grp"><button id="btnFoco" aria-pressed="false">Modo foco</button></div>
+    </div>
+  </div>
+  <div class="top-in" style="padding-top:0">
+    <div style="flex:1"><div class="progress"><i id="bar"></i></div><div class="ptext" id="ptxt">0% lido</div></div>
+  </div>
+</header>
+<div class="layout">
+<aside class="toc" id="toc" hidden>
+  <div class="toc-in">
+    <h2>Sumário — toque no tema</h2>
+    <ol id="toclist">
+      <li><a href="#cap1"><span class="n">1</span><span class="t">Versões e suporte (out/2026)</span></a></li>
+      <li><a href="#cap2"><span class="n">2</span><span class="t">Mentalidade PHP p/ Python-JS</span></a></li>
+      <li><a href="#cap3"><span class="n">3</span><span class="t">Sintaxe, tipos e variáveis</span></a></li>
+      <li><a href="#cap4"><span class="n">4</span><span class="t">Operadores, strings e arrays</span></a></li>
+      <li><a href="#cap5"><span class="n">5</span><span class="t">Fluxo, funções e closures</span></a></li>
+      <li><a href="#cap6"><span class="n">6</span><span class="t">OOP moderna no PHP 8</span></a></li>
+      <li><a href="#cap7"><span class="n">7</span><span class="t">Novidades PHP 8.4 e 8.5</span></a></li>
+      <li><a href="#cap8"><span class="n">8</span><span class="t">Namespaces, Composer e PSRs</span></a></li>
+      <li><a href="#cap9"><span class="n">9</span><span class="t">Erros e segurança em PHP</span></a></li>
+      <li><a href="#cap10"><span class="n">10</span><span class="t">Laravel 13: visão geral e ciclo</span></a></li>
+      <li><a href="#cap11"><span class="n">11</span><span class="t">Rotas, controllers e validação</span></a></li>
+      <li><a href="#cap12"><span class="n">12</span><span class="t">Blade: sites completos</span></a></li>
+      <li><a href="#cap13"><span class="n">13</span><span class="t">Migrations e Eloquent</span></a></li>
+      <li><a href="#cap14"><span class="n">14</span><span class="t">API REST e Resources</span></a></li>
+      <li><a href="#cap15"><span class="n">15</span><span class="t">Autenticação e autorização</span></a></li>
+      <li><a href="#cap16"><span class="n">16</span><span class="t">Cache, filas e AI SDK</span></a></li>
+      <li><a href="#cap17"><span class="n">17</span><span class="t">Testes, deploy e checklist</span></a></li>
+      <li><a href="#cap18"><span class="n">18</span><span class="t">Projeto de 1 dia: TaskBoard</span></a></li>
+      <li><a href="#cap19"><span class="n">19</span><span class="t">Referências e exercícios</span></a></li>
+    </ol>
+  </div>
+</aside>
+<main id="main">
+<p class="crumb">Livro web · atualizado out/2026 · para quem já sabe Python e JavaScript</p>
+<h1>PHP 8.3 / 8.4 / 8.5 + Laravel 12 / 13</h1>
+<p>Teoria completa em didática comparativa. Use o sumário (☰) para pular de assunto, a busca para achar capítulos e o botão ☾ para trocar o modo de leitura (tema, tamanho da fonte, modo foco). Seu progresso fica salvo neste aparelho.</p>
+<div class="note"><b>Como estudar em 4 dias:</b> Dia 1 → caps 1–9 (PHP). Dia 2 → caps 10–13 (Laravel + Blade + Eloquent). Dia 3 → caps 14–16 (API + Auth). Dia 4 → caps 17–18 (projeto TaskBoard).</div>
 
+<section id="cap1"><h2 class="cap">1. Versões e suporte (out/2026)</h2>
+<p>PHP tem release major anual. O estável atual é o ramo <b>8.5</b> (ex.: 8.5.11, set/2026), suporte ativo até 31/12/2027. O <b>8.4</b> (ex.: 8.4.26) tem suporte ativo até 31/12/2026. O <b>8.3</b> (sua máquina: 8.3.35) recebe só segurança — serve para estudar, migre em projeto novo. O 8.6 estava em RC: não usar em produção.</p>
+<div class="tscroll"><table><tr><th>Ramo PHP</th><th>Status</th></tr>
+<tr><td>8.5</td><td>Pipe <code>|&gt;</code>, closures em constantes, cast em constantes, extensão URI, cURL ampliado.</td></tr>
+<tr><td>8.4</td><td>Property hooks, asymmetric visibility, nova API DOM HTML5, atributo <code>#&#8203;[Deprecated]</code>.</td></tr>
+<tr><td>8.3</td><td>Base mínima do Laravel 13. Estude aqui, entregue em 8.4/8.5.</td></tr></table></div>
+<p>Laravel: major anual (~Q1), 18 meses de bug fixes + 2 anos de segurança. <b>13.x</b> (mar/2026, ex. framework 13.35.0) exige PHP 8.3+. <b>12.x</b> só segurança até 24/fev/2027 (use 12.69.0+). <b>11.x</b> em fim de vida (mar/2026). Regra: projeto novo = Laravel 13 + PHP 8.5 (ou 8.4). Rode <code>composer audit --locked</code> no CI.</p>
+<div class="capnav"><a href="#cap2">Próximo →</a><button class="markdone" data-cap="cap1">Marcar como lido</button></div></section>
+
+<section id="cap2"><h2 class="cap">2. Mentalidade PHP para quem vem de Python/JS</h2>
+<div class="tscroll"><table><tr><th>Conceito</th><th>Python/JS → PHP/Laravel</th></tr>
+<tr><td>Gerenciador</td><td>pip/npm → <b>Composer</b> (packagist.org = npm registry)</td></tr>
+<tr><td>Entrada web</td><td><code>app.get()</code> / <code>@app.get</code> → <code>Route::get()</code> + Controller. PHP morre no fim do request (stateless).</td></tr>
+<tr><td>Tipagem</td><td>Type hints/TS → tipos nativos + <code>strict_types</code>. Sem declare, há coerção silenciosa.</td></tr>
+<tr><td>Nulo</td><td>None/null → só <code>null</code>. <code>?-&gt;</code> = <code>?.</code> do JS; <code>??</code> igual ao JS.</td></tr>
+<tr><td>Dict/objeto</td><td>dict/<code>{}</code> → array associativo + Models. Array PHP = lista + dict juntos.</td></tr>
+<tr><td>ORM / templates</td><td>Django ORM → Eloquent. Jinja/JSX → Blade (<code>{{ }}</code> escapa).</td></tr></table></div>
+<div class="note">Node mantém processo vivo; PHP-FPM cria e destrói tudo por request. Por isso <code>.env</code> + <code>config:cache</code> importam em produção.</div>
+<div class="capnav"><a href="#cap1">← Anterior</a><a href="#cap3">Próximo →</a><button class="markdone" data-cap="cap2">Marcar como lido</button></div></section>
+
+<section id="cap3"><h2 class="cap">3. Sintaxe, tipos e variáveis</h2>
+<p>Todo arquivo começa com <code>&lt;?php</code>. Variáveis sempre com <code>$</code>. Use <code>declare(strict_types=1);</code>.</p>
+<div class="tscroll"><table><tr><th>Python / JS</th><th>PHP</th></tr>
+<tr><td><code>nome = 'Ana'</code></td><td><code>$nome = 'Ana';</code></td></tr>
+<tr><td><code>def soma(a:int,b:int)-&gt;int</code></td><td><code>function soma(int $a, int $b): int</code></td></tr>
+<tr><td>f-string / template literal</td><td><code>"Olá $nome"</code> interpola; <code>'Olá '.$nome</code> concatena</td></tr>
+<tr><td><code>cond ? x : y</code></td><td>igual + <code>$y = $a ?? $b;</code></td></tr></table></div>
+<p>Tipos: string, int, float, bool, null, array, object, callable, iterable, mixed, void, never. União <code>int|string</code>, nulável <code>?string</code>.</p>
+<pre><code>declare(strict_types=1);
+function adulto(?int $idade): bool {
+  return ($idade ?? 0) >= 18;
+}</code></pre>
+<div class="capnav"><a href="#cap2">← Anterior</a><a href="#cap4">Próximo →</a><button class="markdone" data-cap="cap3">Marcar como lido</button></div></section>
+
+<section id="cap4"><h2 class="cap">4. Operadores, strings e arrays</h2>
+<div class="tscroll"><table><tr><th>Tema</th><th>Regra PHP</th></tr>
+<tr><td>Concatenação</td><td><code>.</code> une strings; <code>+</code> soma números.</td></tr>
+<tr><td>Comparação</td><td>Use <code>===</code>/<code>!==</code> sempre (como no JS estrito).</td></tr>
+<tr><td>match</td><td><code>match()</code> retorna valor e usa <code>===</code>; <code>&lt;=&gt;</code> retorna -1/0/1.</td></tr>
+<tr><td>Arrays</td><td><code>count()</code>, <code>array_map/filter</code>, <code>in_array</code>, spread <code>...</code>, <code>[$a,$b]=explode('.',$v)</code>.</td></tr></table></div>
+<pre><code>$papel = match($tipo) {
+  'admin' =&gt; 'total',
+  'editor','autor' =&gt; 'parcial',
+  default =&gt; 'leitura',
+};</code></pre>
+<div class="capnav"><a href="#cap3">← Anterior</a><a href="#cap5">Próximo →</a><button class="markdone" data-cap="cap4">Marcar como lido</button></div></section>
+
+<section id="cap5"><h2 class="cap">5. Controle de fluxo, funções e closures</h2>
+<p><code>foreach ($lista as $x)</code> e <code>foreach ($map as $k=&gt;$v)</code> substituem o <code>for..of</code>. Arrow <code>fn($x)=&gt;$x*2</code> captura escopo sozinha; <code>function</code> precisa de <code>use ($var)</code>.</p>
+<pre><code>$dobro = array_map(fn($x) =&gt; $x*2, $l);
+try { salvar(); }
+catch (Exception $e) { log($e-&gt;getMessage()); }
+finally { fechar(); }</code></pre>
+<div class="capnav"><a href="#cap4">← Anterior</a><a href="#cap6">Próximo →</a><button class="markdone" data-cap="cap5">Marcar como lido</button></div></section>
+
+<section id="cap6"><h2 class="cap">6. OOP moderna no PHP 8</h2>
+<p><code>-&gt;</code> acessa membro (como <code>.</code>), <code>::</code> acessa estático, <code>$this</code> é o <code>self</code> do Python.</p>
+<pre><code>class User {
+  public function __construct(
+    public string $nome,
+    private int $idade = 18,
+  ) {}
+  public static function anonimo(): self {
+    return new self('Anonimo');
+  }
+}</code></pre>
+<div class="tscroll"><table><tr><th>Recurso</th><th>Uso</th></tr>
+<tr><td>Constructor promotion</td><td>Declara + atribui no construtor (acima). Menos boilerplate.</td></tr>
+<tr><td>readonly</td><td>Escrita única. Ideal p/ DTOs.</td></tr>
+<tr><td>Enums</td><td><code>enum Status: string { case Ativo='ativo'; }</code></td></tr>
+<tr><td>Traits</td><td>Mixins. Ex.: <code>use SoftDeletes;</code></td></tr>
+<tr><td>Attributes</td><td><code>#[...]</code> — metadados via Reflection; Laravel 13 usa em rotas e validação.</td></tr></table></div>
+<div class="capnav"><a href="#cap5">← Anterior</a><a href="#cap7">Próximo →</a><button class="markdone" data-cap="cap6">Marcar como lido</button></div></section>
+
+<section id="cap7"><h2 class="cap">7. Novidades PHP 8.4 e 8.5</h2>
+<h3>PHP 8.4</h3>
+<div class="tscroll"><table><tr><th>Novidade</th><th>Efeito</th></tr>
+<tr><td>Property hooks</td><td>get/set na propriedade, sem getter/setter manual.</td></tr>
+<tr><td>Asymmetric visibility</td><td><code>public private(set) string $v</code>: lê fora, escreve dentro.</td></tr>
+<tr><td><code>#&#8203;[Deprecated]</code></td><td>Marca função/método/const como depreciada com mensagem.</td></tr>
+<tr><td>DOM HTML5</td><td><code>Dom\HTMLDocument</code> — parse correto de HTML5.</td></tr></table></div>
+<h3>PHP 8.5</h3>
+<pre><code>$result = "Hello World" |&gt; strlen(...); // 11
+const T1 = (int) 0.3; // antes era erro fatal
+(void) concat("a", "b"); // silencia #[NoDiscard]</code></pre>
+<p>Mais: extensão URI, <code>curl_getinfo()</code> com proxy/auth/conn_id/queue_time, closures em expressões constantes.</p>
+<div class="capnav"><a href="#cap6">← Anterior</a><a href="#cap8">Próximo →</a><button class="markdone" data-cap="cap7">Marcar como lido</button></div></section>
+
+<section id="cap8"><h2 class="cap">8. Namespaces, autoload, Composer e PSRs</h2>
+<pre><code>namespace App\Models;
+use App\Http\Controllers\TaskController;
+// composer.json: "App\" =&gt; "app/"
+// App\Models\Task vive em app/Models/Task.php</code></pre>
+<div class="tscroll"><table><tr><th>Comando</th><th>Uso</th></tr>
+<tr><td><code>composer install</code></td><td>Instala do lock (como <code>npm ci</code>).</td></tr>
+<tr><td><code>composer require laravel/sanctum</code></td><td>Adiciona dependência.</td></tr>
+<tr><td><code>composer dump-autoload</code></td><td>Regenera autoload.</td></tr>
+<tr><td><code>composer audit --locked</code></td><td>Auditoria de CVEs — use no CI.</td></tr></table></div>
+<div class="capnav"><a href="#cap7">← Anterior</a><a href="#cap9">Próximo →</a><button class="markdone" data-cap="cap8">Marcar como lido</button></div></section>
+
+<section id="cap9"><h2 class="cap">9. Erros, exceções e segurança em PHP</h2>
+<div class="tscroll"><table><tr><th>Tema</th><th>Regra</th></tr>
+<tr><td>Debug</td><td><code>APP_DEBUG=false</code> em produção (debug exposto foi vetor de XSS em 2026).</td></tr>
+<tr><td>Entradas</td><td>Validar na borda (FormRequest). Blade <code>{{ }}</code> escapa; <code>{!! !!}</code> só com HTML confiável.</td></tr>
+<tr><td>SQL</td><td>Nunca concatenar SQL — Eloquent/Query Builder com bindings.</td></tr>
+<tr><td>Senhas</td><td><code>Hash::make/check</code> (bcrypt/argon2). Nunca md5/sha1.</td></tr></table></div>
+<div class="capnav"><a href="#cap8">← Anterior</a><a href="#cap10">Próximo →</a><button class="markdone" data-cap="cap9">Marcar como lido</button></div></section>
+
+<section id="cap10"><h2 class="cap">10. Laravel 13: visão geral e ciclo</h2>
+<p>Batteries-included como Django. Requer PHP 8.3+.</p>
+<pre><code>composer create-project laravel/laravel taskboard
+cd taskboard
+php artisan serve
+php artisan migrate</code></pre>
+<div class="tscroll"><table><tr><th>Local</th><th>Papel</th></tr>
+<tr><td><code>routes/web.php</code>, <code>api.php</code></td><td>URLs do site e da API (API = JSON por padrão no 13).</td></tr>
+<tr><td><code>app/Http/Controllers</code></td><td>Orquestra request → model → response. Fino, sem SQL.</td></tr>
+<tr><td><code>app/Models</code></td><td>Eloquent: 1 classe = 1 tabela.</td></tr>
+<tr><td><code>resources/views</code></td><td>Blade: HTML do site.</td></tr>
+<tr><td><code>database/migrations</code></td><td>Versionamento do banco.</td></tr>
+<tr><td><code>.env</code></td><td>Segredos. Nunca commitar o real.</td></tr></table></div>
+<p class="note">Ciclo: Request → Middleware → Rota → Controller → Model → Resource/View → Response.</p>
+<div class="capnav"><a href="#cap9">← Anterior</a><a href="#cap11">Próximo →</a><button class="markdone" data-cap="cap10">Marcar como lido</button></div></section>
+
+<section id="cap11"><h2 class="cap">11. Rotas, controllers e validação</h2>
+<pre><code>Route::apiResource('tasks', TaskController::class);
+
+class StoreTaskRequest extends FormRequest {
+  public function rules(): array {
+    return ['titulo' =&gt; 'required|string|max:120',
+            'done' =&gt; 'boolean'];
+  }
+}</code></pre>
+<p>API com erro de validação retorna <b>422 JSON</b> automático; web volta ao form com <code>errors</code>. Teste sempre os dois caminhos: sucesso e 422/403.</p>
+<div class="capnav"><a href="#cap10">← Anterior</a><a href="#cap12">Próximo →</a><button class="markdone" data-cap="cap11">Marcar como lido</button></div></section>
+
+<section id="cap12"><h2 class="cap">12. Blade: sites completos</h2>
+<pre><code>@extends('layouts.app')
+@section('content')
+@foreach ($tasks as $t)
+  &lt;p&gt;{{ $t-&gt;titulo }}&lt;/p&gt;
+@endforeach
+&lt;form method="POST" action="/tasks"&gt;@csrf
+  &lt;input name="titulo" value="{{ old('titulo') }}"&gt;
+  @error('titulo')&lt;span&gt;{{ $message }}&lt;/span&gt;@enderror
+&lt;/form&gt;
+@endsection</code></pre>
+<p>Breeze/Jetstream não recebem mais updates — prefira os starter kits atuais (Livewire/Volt ou Inertia + React/Vue).</p>
+<div class="capnav"><a href="#cap11">← Anterior</a><a href="#cap13">Próximo →</a><button class="markdone" data-cap="cap12">Marcar como lido</button></div></section>
+
+<section id="cap13"><h2 class="cap">13. Banco: migrations e Eloquent</h2>
+<pre><code>php artisan make:model Task -mcr
+Schema::create('tasks', function (Blueprint $t) {
+  $t-&gt;id();
+  $t-&gt;string('titulo', 120);
+  $t-&gt;boolean('done')-&gt;default(false);
+  $t-&gt;foreignId('user_id')-&gt;constrained()-&gt;cascadeOnDelete();
+  $t-&gt;timestamps();
+});</code></pre>
+<div class="tscroll"><table><tr><th>Técnica</th><th>Exemplo</th></tr>
+<tr><td>Eager loading (anti N+1)</td><td><code>Task::with('user')-&gt;paginate(15)</code></td></tr>
+<tr><td>Transação</td><td><code>DB::transaction(fn()=&gt;{...})</code></td></tr>
+<tr><td>Proteção</td><td><code>$fillable</code> = lista branca (mass assignment).</td></tr></table></div>
+<div class="capnav"><a href="#cap12">← Anterior</a><a href="#cap14">Próximo →</a><button class="markdone" data-cap="cap13">Marcar como lido</button></div></section>
+
+<section id="cap14"><h2 class="cap">14. API REST: Resources e paginação</h2>
+<p>Nunca retorne o Model cru em API pública — use <b>API Resource</b> (no 13 há também JSON:API resources).</p>
+<pre><code>class TaskResource extends JsonResource {
+  public function toArray($req): array {
+    return ['id' =&gt; $this-&gt;id,
+            'titulo' =&gt; $this-&gt;titulo,
+            'done' =&gt; $this-&gt;done];
+  }
+}
+return TaskResource::collection(
+  Task::with('user')-&gt;paginate(15));</code></pre>
+<p>201 POST · 204 DELETE · 422 validação · 401 sem login · 403 sem permissão · 404 inexistente.</p>
+<div class="capnav"><a href="#cap13">← Anterior</a><a href="#cap15">Próximo →</a><button class="markdone" data-cap="cap14">Marcar como lido</button></div></section>
+
+<section id="cap15"><h2 class="cap">15. Autenticação e autorização</h2>
+<div class="tscroll"><table><tr><th>Cenário</th><th>Solução</th></tr>
+<tr><td>Site Blade</td><td>Starter kit com sessão (login, registro, reset).</td></tr>
+<tr><td>SPA/mobile</td><td>Sanctum Bearer tokens; logout revoga.</td></tr>
+<tr><td>Social/SSO</td><td>WorkOS AuthKit ou Socialite.</td></tr>
+<tr><td>Permissão</td><td>Policies: <code>$this-&gt;authorize('update', $task)</code> → 403.</td></tr></table></div>
+<pre><code>$token = $user-&gt;createToken('app')-&gt;plainTextToken;
+Route::middleware('auth:sanctum')
+  -&gt;apiResource('tasks', TaskController::class);</code></pre>
+<div class="capnav"><a href="#cap14">← Anterior</a><a href="#cap16">Próximo →</a><button class="markdone" data-cap="cap15">Marcar como lido</button></div></section>
+
+<section id="cap16"><h2 class="cap">16. Cache, filas, eventos e AI SDK</h2>
+<div class="tscroll"><table><tr><th>Recurso</th><th>Uso</th></tr>
+<tr><td><code>Cache::touch</code> (novo 13)</td><td>Estende TTL sem reler e regravar.</td></tr>
+<tr><td>Filas</td><td>Job <code>ShouldQueue</code> + retry + idempotência.</td></tr>
+<tr><td>AI SDK (13)</td><td>Texto, agents com tools, embeddings, áudio, imagem — provider-agnostic.</td></tr>
+<tr><td>Busca semântica</td><td>Postgres + pgvector + similaridade no query builder.</td></tr></table></div>
+<div class="capnav"><a href="#cap15">← Anterior</a><a href="#cap17">Próximo →</a><button class="markdone" data-cap="cap16">Marcar como lido</button></div></section>
+
+<section id="cap17"><h2 class="cap">17. Testes, debug, deploy e checklist</h2>
+<pre><code>php artisan test
+test('cria tarefa', function () {
+  $user = User::factory()-&gt;create();
+  $this-&gt;actingAs($user)
+    -&gt;postJson('/api/tasks', ['titulo' =&gt; 'Estudar'])
+    -&gt;assertCreated();
+});</code></pre>
+<div class="tscroll"><table><tr><th>Etapa</th><th>Checklist</th></tr>
+<tr><td>Env</td><td><code>APP_DEBUG=false</code>, <code>config:cache</code>, <code>route:cache</code>.</td></tr>
+<tr><td>Banco/filas</td><td><code>migrate --force</code>, worker supervisionado, cron, backup.</td></tr>
+<tr><td>Segurança</td><td>13.30.0+ ou 12.69.0+, <code>composer audit</code>, HTTPS, rate limit.</td></tr></table></div>
+<div class="capnav"><a href="#cap16">← Anterior</a><a href="#cap18">Próximo →</a><button class="markdone" data-cap="cap17">Marcar como lido</button></div></section>
+
+<section id="cap18"><h2 class="cap">18. Projeto de 1 dia: TaskBoard</h2>
+<div class="tscroll"><table><tr><th>Requisito</th><th>Pronto quando</th></tr>
+<tr><td>Auth</td><td>Web + token Sanctum; só o dono vê/edita.</td></tr>
+<tr><td>CRUD</td><td>titulo (max 120), done, user_id. Blade + API paginada (15).</td></tr>
+<tr><td>Qualidade</td><td><code>with('user')</code>, transação, Policy, testes 201 + 422 + 403.</td></tr>
+<tr><td>Extra</td><td>Cache na lista, Job de boas-vindas, filtro <code>?done=false</code>.</td></tr></table></div>
+<p class="note">Roteiro 8h: 1h setup → 2h CRUD web → 2h API → 1h auth/policy → 1h testes → 1h polish. Travou 40min? Corte o extra, nunca auth/policy/teste.</p>
+<div class="capnav"><a href="#cap17">← Anterior</a><a href="#cap19">Próximo →</a><button class="markdone" data-cap="cap18">Marcar como lido</button></div></section>
+
+<section id="cap19"><h2 class="cap">19. Referências e exercícios</h2>
+<h3>Referências oficiais (verificadas out/2026)</h3>
+<ul class="refs">
+<li>Manual PHP: https://www.php.net/manual/en/</li>
+<li>Novidades PHP 8.5: https://www.php.net/manual/en/migration85.new-features.php</li>
+<li>Anúncio PHP 8.4: https://www.php.net/releases/8.4/en.php</li>
+<li>Changelog PHP 8: https://www.php.net/ChangeLog-8.php</li>
+<li>PHP homepage: https://www.php.net/</li>
+<li>Laravel 13 release notes: https://laravel.com/docs/13.x/releases</li>
+<li>Docs Laravel 13: https://laravel.com/docs/13.x</li>
+<li>Changelog framework: https://github.com/laravel/framework/blob/13.x/CHANGELOG.md</li>
+<li>Changelog app: https://github.com/laravel/laravel/blob/13.x/CHANGELOG.md</li>
+</ul>
+<h3>Exercícios (toque para marcar feito)</h3>
+<ul class="ex" id="exlist">
+<li><input type="checkbox" data-ex="e1"><span>Reescreva soma()/media() de Python para PHP com strict_types; teste com e sem strict.</span></li>
+<li><input type="checkbox" data-ex="e2"><span>Converta list comprehension e .map/.filter para array_map/filter com fn().</span></li>
+<li><input type="checkbox" data-ex="e3"><span>Crie enum Status + classe Task com promotion + readonly; tente alterar e observe o erro.</span></li>
+<li><input type="checkbox" data-ex="e4"><span>Use pipe |&gt; em strlen(trim(strtoupper())) e um property hook com trim.</span></li>
+<li><input type="checkbox" data-ex="e5"><span>Rota GET /hello/{nome} com validação max 50 retornando JSON; teste 200 e 422.</span></li>
+<li><input type="checkbox" data-ex="e6"><span>View Blade com @csrf, old() e @error; compare {{ }} vs {!! !!} e o risco XSS.</span></li>
+<li><input type="checkbox" data-ex="e7"><span>Migration tasks + Model com fillable + relacionamentos; prove o N+1 com/sem with().</span></li>
+<li><input type="checkbox" data-ex="e8"><span>TaskResource escondendo user_id + paginate(15).</span></li>
+<li><input type="checkbox" data-ex="e9"><span>Proteja a API com sanctum + Policy só-dono; teste 401 e 403.</span></li>
+<li><input type="checkbox" data-ex="e10"><span>Cache::remember + touch na listagem; e-mail em Job ShouldQueue.</span></li>
+<li><input type="checkbox" data-ex="e11"><span>3 testes (201, 422, 403) + composer audit.</span></li>
+</ul>
+<div class="capnav"><a href="#cap18">← Anterior</a><a href="#cap1">↑ Voltar ao início</a><button class="markdone" data-cap="cap19">Marcar como lido</button></div></section>
+<footer>Livro web gerado em 16/10/2026 · Em divergência com o manual oficial, vale o manual · Bons estudos.</footer>
+</main>
+</div>
+<nav class="mobilenav">
+  <a href="#" id="mPrev">← Anterior</a>
+  <a href="#cap1" id="mToc">Sumário</a>
+  <a href="#" id="mNext">Próximo →</a>
+</nav>
+<button class="iconbtn topbtn" id="btnTop" aria-label="Voltar ao topo">↑</button>
+<script>
+(function(){
+var K="livro-php-laravel-v1", S;
+try{S=JSON.parse(localStorage.getItem(K))||{}}catch(e){S={}}
+S.done=S.done||{};S.ex=S.ex||{};S.th=S.th||"claro";S.fs=S.fs||1.02;S.foco=!!S.foco;
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+var toc=document.getElementById("toc"), cfg=document.getElementById("cfgbar");
+function isMobile(){return window.matchMedia("(max-width:899px)").matches}
+if(!isMobile()) toc.hidden=false;
+document.getElementById("btnToc").onclick=function(){toc.hidden=!toc.hidden;if(!toc.hidden&&isMobile())toc.scrollIntoView()};
+document.getElementById("btnCfg").onclick=function(){cfgbar.hidden=!cfgbar.hidden};
+function applyTheme(){document.body.dataset.theme=S.th;
+document.querySelectorAll("[data-th]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.th===S.th?"true":"false")})}
+document.querySelectorAll("[data-th]").forEach(function(b){b.onclick=function(){S.th=b.dataset.th;applyTheme();save()}});
+function applyFs(){document.documentElement.style.setProperty("--fs",S.fs+"rem")}
+document.getElementById("fPlus").onclick=function(){S.fs=Math.min(1.4,+(S.fs+0.08).toFixed(2));applyFs();save()};
+document.getElementById("fMinus").onclick=function(){S.fs=Math.max(0.85,+(S.fs-0.08).toFixed(2));applyFs();save()};
+var bf=document.getElementById("btnFoco");
+function applyFoco(){document.body.classList.toggle("foco",S.foco);bf.setAttribute("aria-pressed",S.foco?"true":"false")}
+bf.onclick=function(){S.foco=!S.foco;applyFoco();save()};
+var caps=["cap1","cap2","cap3","cap4","cap5","cap6","cap7","cap8","cap9","cap10","cap11","cap12","cap13","cap14","cap15","cap16","cap17","cap18","cap19"];
+function paint(){var n=caps.filter(function(c){return S.done[c]}).length;
+document.getElementById("bar").style.width=Math.round(n/caps.length*100)+"%";
+document.getElementById("ptxt").textContent=Math.round(n/caps.length*100)+"% lido ("+n+"/"+caps.length+")";
+document.querySelectorAll(".markdone").forEach(function(b){var on=!!S.done[b.dataset.cap];b.textContent=on?"✓ Lido":"Marcar como lido";b.classList.toggle("markdone-on",on)});
+document.querySelectorAll("#toclist a").forEach(function(a){var id=a.getAttribute("href").slice(1);a.classList.toggle("done",!!S.done[id])});
+document.querySelectorAll("#exlist li").forEach(function(li){var i=li.querySelector("input");var on=!!S.ex[i.dataset.ex];i.checked=on;li.classList.toggle("done",on)})}
+document.querySelectorAll(".markdone").forEach(function(b){b.onclick=function(){var id=b.dataset.cap;S.done[id]=!S.done[id];save();paint()}});
+document.querySelectorAll("#exlist input").forEach(function(i){i.onchange=function(){S.ex[i.dataset.ex]=i.checked;save();paint()}});
+function cur(){var h=(location.hash||"#cap1").slice(1);return caps.indexOf(h)}
+function go(d){var i=Math.min(caps.length-1,Math.max(0,cur()+d));location.hash=caps[i]}
+document.getElementById("mPrev").onclick=function(e){e.preventDefault();go(-1)};
+document.getElementById("mNext").onclick=function(e){e.preventDefault();go(1)};
+document.getElementById("mToc").onclick=function(e){e.preventDefault();toc.hidden=false;toc.scrollIntoView({behavior:"smooth"})};
+function markCur(){document.querySelectorAll("#toclist a").forEach(function(a){a.setAttribute("aria-current",a.getAttribute("href")===location.hash?"true":"false")})}
+window.addEventListener("hashchange",markCur);
+document.getElementById("q").addEventListener("input",function(e){var t=e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+document.querySelectorAll("#toclist a").forEach(function(a){var x=a.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");a.classList.toggle("hidden",t&&x.indexOf(t)<0)});
+if(t&&toc.hidden&&isMobile()){toc.hidden=false}});
+document.querySelectorAll("pre").forEach(function(p){var b=document.createElement("button");b.className="copy";b.textContent="Copiar";b.onclick=function(){var t=p.innerText;if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){b.textContent="✓";setTimeout(function(){b.textContent="Copiar"},1200)})};p.prepend(b)});
+var bt=document.getElementById("btnTop");
+window.addEventListener("scroll",function(){bt.classList.toggle("show",window.scrollY>600)},{passive:true});
+bt.onclick=function(){window.scrollTo({top:0,behavior:"smooth"})};
+applyTheme();applyFs();applyFoco();paint();markCur();
+})();
+</script>
+</body>
+</html>
